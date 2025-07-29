@@ -1,0 +1,1659 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TheCorporateMC | Premium Event Host</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Fredoka+One&family=Montserrat:wght@700;800&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #FF6B00;
+            --secondary: #FFD700;
+            --accent: #FF4081;
+            --dark: #1A1A2E;
+            --light: #FFF8F0;
+            --transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        /* Preloader */
+        .preloader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--dark);
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.5s, visibility 0.5s;
+        }
+        
+        .preloader.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+        
+        .mic-loader {
+            position: relative;
+            width: 120px;
+            height: 200px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .mic-stand {
+            width: 10px;
+            height: 120px;
+            background: var(--secondary);
+            border-radius: 5px;
+            position: relative;
+            animation: standPulse 2s infinite;
+        }
+        
+        .mic-head {
+            width: 60px;
+            height: 60px;
+            background: radial-gradient(circle, #333 0%, #000 70%);
+            border-radius: 50%;
+            position: absolute;
+            top: -30px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            animation: micBounce 1.5s infinite alternate;
+        }
+        
+        .mic-grill {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: 
+                radial-gradient(circle, transparent 30%, #222 30%),
+                repeating-conic-gradient(#444 0% 15%, #222 15% 30%);
+            position: relative;
+        }
+        
+        .mic-grill::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: #222;
+        }
+        
+        .sound-waves {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 200px;
+            height: 200px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .wave {
+            position: absolute;
+            border: 2px solid var(--primary);
+            border-radius: 50%;
+            opacity: 0;
+            animation: wavePulse 2s infinite;
+        }
+        
+        .wave:nth-child(1) { animation-delay: 0s; width: 100px; height: 100px; }
+        .wave:nth-child(2) { animation-delay: 0.5s; width: 150px; height: 150px; }
+        .wave:nth-child(3) { animation-delay: 1s; width: 200px; height: 200px; }
+        
+        .preloader-text {
+            color: var(--secondary);
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            margin-top: 30px;
+            font-size: 1.2rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            animation: textPulse 2s infinite;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--light);
+            color: var(--dark);
+            line-height: 1.6;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+        
+        /* Mobile Navigation */
+        .mobile-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            padding: 15px 20px;
+            background: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-family: 'Fredoka One', cursive;
+            font-size: 1.8rem;
+            color: var(--dark);
+            text-decoration: none;
+        }
+        
+        .logo span {
+            color: var(--primary);
+        }
+        
+        .mobile-menu-btn {
+            background: none;
+            border: none;
+            font-size: 1.8rem;
+            color: var(--dark);
+            cursor: pointer;
+            z-index: 1001;
+        }
+        
+        .mobile-nav {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 80%;
+            max-width: 300px;
+            height: 100vh;
+            background: var(--dark);
+            z-index: 1000;
+            transition: var(--transition);
+            padding: 80px 30px 30px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: -5px 0 25px rgba(0, 0, 0, 0.2);
+        }
+        
+        .mobile-nav.active {
+            right: 0;
+        }
+        
+        .mobile-nav-links {
+            list-style: none;
+        }
+        
+        .mobile-nav-links li {
+            margin-bottom: 20px;
+        }
+        
+        .mobile-nav-links a {
+            color: white;
+            text-decoration: none;
+            font-size: 1.2rem;
+            font-weight: 500;
+            display: block;
+            padding: 12px 15px;
+            border-radius: 8px;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+        }
+        
+        .mobile-nav-links a i {
+            margin-right: 12px;
+            font-size: 1.3rem;
+            width: 30px;
+            text-align: center;
+        }
+        
+        .mobile-nav-links a:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--secondary);
+            transform: translateX(5px);
+        }
+        
+        .mobile-nav-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.8rem;
+            cursor: pointer;
+        }
+        
+        .nav-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition);
+        }
+        
+        .nav-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+            padding: 90px 20px 60px;
+        }
+        
+        .hero-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+        
+        .hero-bg::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(26, 26, 46, 0.9) 0%, rgba(18, 18, 34, 0.95) 100%);
+            z-index: 1;
+        }
+        
+        .animated-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 10% 20%, rgba(255, 107, 0, 0.15) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(255, 215, 0, 0.15) 0%, transparent 20%),
+                radial-gradient(circle at 30% 60%, rgba(255, 64, 129, 0.1) 0%, transparent 25%),
+                radial-gradient(circle at 70% 30%, rgba(255, 107, 0, 0.1) 0%, transparent 25%);
+            background-size: 300% 300%;
+            animation: gradientMove 20s ease infinite;
+            z-index: 2;
+        }
+        
+        .floating-shapes {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 3;
+            pointer-events: none;
+        }
+        
+        .shape {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle, var(--secondary) 0%, transparent 70%);
+            opacity: 0.1;
+            filter: blur(10px);
+            animation: float 15s infinite linear;
+        }
+        
+        .shape:nth-child(1) {
+            width: 300px;
+            height: 300px;
+            top: -150px;
+            left: -150px;
+            animation-delay: 0s;
+            animation-duration: 25s;
+        }
+        
+        .shape:nth-child(2) {
+            width: 200px;
+            height: 200px;
+            bottom: -100px;
+            right: 20%;
+            animation-delay: 5s;
+            animation-duration: 20s;
+            background: radial-gradient(circle, var(--primary) 0%, transparent 70%);
+        }
+        
+        .shape:nth-child(3) {
+            width: 150px;
+            height: 150px;
+            top: 30%;
+            right: -75px;
+            animation-delay: 10s;
+            animation-duration: 18s;
+            background: radial-gradient(circle, var(--accent) 0%, transparent 70%);
+        }
+        
+        .shape:nth-child(4) {
+            width: 250px;
+            height: 250px;
+            bottom: 20%;
+            left: -125px;
+            animation-delay: 15s;
+            animation-duration: 22s;
+        }
+        
+        .hero-content {
+            position: relative;
+            z-index: 4;
+            color: white;
+            text-align: center;
+            width: 100%;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        
+        .hero h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            line-height: 1.1;
+            color: var(--secondary);
+            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            animation: fadeInUp 1s ease-out;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+        
+        .hero h1 span {
+            display: block;
+            font-family: 'Montserrat', sans-serif;
+            color: white;
+            font-size: 2.8rem;
+            margin-top: 10px;
+            letter-spacing: 1px;
+            animation: fadeInUp 1s ease-out 0.2s forwards;
+            opacity: 0;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+        
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            color: rgba(255, 255, 255, 0.9);
+            animation: fadeInUp 1s ease-out 0.4s forwards;
+            opacity: 0;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .tagline {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.8rem;
+            color: var(--secondary);
+            margin: 1.5rem 0;
+            animation: pulse 2s infinite;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+        
+        .hero-btns {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 2rem;
+            animation: fadeInUp 1s ease-out 0.6s forwards;
+            opacity: 0;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 16px 36px;
+            border-radius: 50px;
+            font-weight: 600;
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 1.1rem;
+            transition: var(--transition);
+            border: none;
+            cursor: pointer;
+            text-align: center;
+            min-width: 220px;
+        }
+        
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 5px 15px rgba(255, 107, 0, 0.4);
+        }
+        
+        .btn-primary:hover {
+            background: #e05a00;
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(255, 107, 0, 0.5);
+        }
+        
+        .btn-secondary {
+            background: transparent;
+            color: white;
+            border: 3px solid var(--secondary);
+        }
+        
+        .btn-secondary:hover {
+            background: var(--secondary);
+            color: var(--dark);
+            transform: translateY(-5px);
+        }
+        
+        .hero-stats {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-top: 3rem;
+            animation: fadeInUp 1s ease-out 0.8s forwards;
+            opacity: 0;
+        }
+        
+        .stat-item {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            border-radius: 15px;
+            min-width: 140px;
+            border: 2px solid rgba(255, 215, 0, 0.3);
+        }
+        
+        .stat-number {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: var(--secondary);
+            font-family: 'Fredoka One', cursive;
+        }
+        
+        .stat-label {
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.8);
+        }
+        
+        /* Sections */
+        section {
+            padding: 80px 20px;
+        }
+        
+        .section-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        
+        .section-header h2 {
+            font-family: 'Fredoka One', cursive;
+            font-size: 2.5rem;
+            color: var(--dark);
+            display: inline-block;
+            margin-bottom: 15px;
+            position: relative;
+        }
+        
+        .section-header h2::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 5px;
+            background: var(--primary);
+            border-radius: 3px;
+        }
+        
+        .section-header p {
+            font-size: 1.2rem;
+            color: #666;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        
+        /* About Section */
+        .about {
+            background: white;
+        }
+        
+        .about-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 40px;
+            align-items: center;
+        }
+        
+        .about-img {
+            position: relative;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+        
+        .about-img img {
+            width: 100%;
+            display: block;
+            transition: var(--transition);
+        }
+        
+        .about-content h2 {
+            font-family: 'Fredoka One', cursive;
+            font-size: 2.2rem;
+            color: var(--dark);
+            margin-bottom: 1.5rem;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .about-content h2::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 80px;
+            height: 5px;
+            background: var(--primary);
+            border-radius: 3px;
+        }
+        
+        .about-highlights {
+            margin: 2rem 0;
+        }
+        
+        .highlight-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            background: rgba(255, 107, 0, 0.05);
+            padding: 15px;
+            border-radius: 10px;
+        }
+        
+        .highlight-icon {
+            width: 50px;
+            height: 50px;
+            background: rgba(255, 107, 0, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 20px;
+            font-size: 1.3rem;
+            color: var(--primary);
+        }
+        
+        .highlight-text h4 {
+            font-family: 'Fredoka One', cursive;
+            margin-bottom: 5px;
+            color: var(--dark);
+            font-size: 1.2rem;
+        }
+        
+        /* Services Section */
+        .services {
+            background: var(--light);
+        }
+        
+        .services-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 25px;
+        }
+        
+        .service-card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            transition: var(--transition);
+            text-align: center;
+            border-top: 5px solid var(--primary);
+        }
+        
+        .service-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+        }
+        
+        .service-icon {
+            font-size: 3rem;
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+        }
+        
+        .service-card h3 {
+            font-family: 'Fredoka One', cursive;
+            margin-bottom: 1rem;
+            color: var(--dark);
+            font-size: 1.6rem;
+        }
+        
+        /* Instagram Reels Section */
+        .reels {
+            background: linear-gradient(135deg, #f9f9ff 0%, #f0f0ff 100%);
+            padding: 80px 20px;
+        }
+        
+        .reels-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .reel-item {
+            position: relative;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: var(--transition);
+            aspect-ratio: 9/16;
+            background: #000;
+        }
+        
+        .reel-item:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+        }
+        
+        .reel-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(transparent, rgba(0,0,0,0.8));
+            color: white;
+            transition: var(--transition);
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        .reel-item:hover .reel-overlay {
+            opacity: 1;
+        }
+        
+        .reel-overlay h3 {
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+        }
+        
+        .reel-overlay p {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+        
+        .instagram-cta {
+            text-align: center;
+            margin-top: 30px;
+        }
+        
+        .instagram-cta a {
+            display: inline-flex;
+            align-items: center;
+            background: linear-gradient(45deg, #405DE6, #5851DB, #833AB4, #C13584, #E1306C, #FD1D1D);
+            color: white;
+            padding: 12px 25px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+        
+        .instagram-cta a:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(193, 53, 132, 0.3);
+        }
+        
+        .instagram-cta a i {
+            margin-right: 10px;
+            font-size: 1.3rem;
+        }
+        
+        /* Testimonials */
+        .testimonials {
+            background: white;
+        }
+        
+        .testimonial-container {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.1);
+            position: relative;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .testimonial-container::before {
+            content: '"';
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-size: 5rem;
+            font-family: 'Fredoka One', cursive;
+            color: rgba(255, 107, 0, 0.1);
+            line-height: 1;
+        }
+        
+        .testimonial-text {
+            font-size: 1.1rem;
+            font-style: italic;
+            margin-bottom: 2rem;
+            line-height: 1.8;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+        }
+        
+        .author-img {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            overflow: hidden;
+            margin-right: 20px;
+            border: 3px solid var(--primary);
+        }
+        
+        .author-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .author-info h4 {
+            font-family: 'Fredoka One', cursive;
+            margin-bottom: 5px;
+            color: var(--dark);
+        }
+        
+        /* Contact Section */
+        .contact {
+            background: linear-gradient(135deg, var(--dark) 0%, #0d0d1a 100%);
+            color: white;
+        }
+        
+        .contact-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 40px;
+        }
+        
+        .contact-info h2 {
+            font-family: 'Fredoka One', cursive;
+            font-size: 2.2rem;
+            margin-bottom: 1.5rem;
+            color: white;
+        }
+        
+        .contact-methods {
+            margin-top: 2rem;
+        }
+        
+        .contact-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 25px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+        
+        .contact-icon {
+            width: 50px;
+            height: 50px;
+            background: rgba(255, 107, 0, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            color: var(--secondary);
+            margin-right: 20px;
+            flex-shrink: 0;
+        }
+        
+        .contact-details h3 {
+            font-family: 'Fredoka One', cursive;
+            margin-bottom: 5px;
+            font-size: 1.2rem;
+        }
+        
+        .contact-details a {
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+        
+        .contact-details a:hover {
+            color: var(--secondary);
+        }
+        
+        .contact-form {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 14px 18px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        textarea.form-control {
+            min-height: 140px;
+            resize: vertical;
+        }
+        
+        /* Footer */
+        .footer {
+            background: #0a0a14;
+            color: rgba(255, 255, 255, 0.7);
+            padding: 60px 20px 30px;
+        }
+        
+        .footer-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 40px;
+        }
+        
+        .footer-logo {
+            font-family: 'Fredoka One', cursive;
+            font-size: 2rem;
+            color: white;
+            display: block;
+            margin-bottom: 1rem;
+        }
+        
+        .footer-logo span {
+            color: var(--primary);
+        }
+        
+        .social-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .social-links a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 1.2rem;
+            transition: var(--transition);
+        }
+        
+        .social-links a:hover {
+            background: var(--primary);
+            transform: translateY(-5px);
+        }
+        
+        .footer-links {
+            list-style: none;
+        }
+        
+        .footer-links li {
+            margin-bottom: 15px;
+        }
+        
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+        
+        .footer-links a:hover {
+            color: var(--primary);
+        }
+        
+        .footer-bottom {
+            margin-top: 50px;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.5);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .design-credit {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 10px;
+            font-size: 1rem;
+            color: var(--secondary);
+        }
+        
+        .design-credit a {
+            color: var(--secondary);
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .design-credit a:hover {
+            color: var(--primary);
+        }
+        
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        @keyframes float {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            25% { transform: translate(20px, -20px) rotate(10deg); }
+            50% { transform: translate(0, -40px) rotate(0deg); }
+            75% { transform: translate(-20px, -20px) rotate(-10deg); }
+            100% { transform: translate(0, 0) rotate(0deg); }
+        }
+        
+        @keyframes gradientMove {
+            0% { background-position: 0% 0%; }
+            50% { background-position: 100% 100%; }
+            100% { background-position: 0% 0%; }
+        }
+        
+        /* Preloader Animations */
+        @keyframes micBounce {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-20px); }
+        }
+        
+        @keyframes standPulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.7); }
+            50% { box-shadow: 0 0 20px 10px rgba(255, 215, 0, 0.7); }
+        }
+        
+        @keyframes wavePulse {
+            0% { transform: scale(0.8); opacity: 1; }
+            100% { transform: scale(1.2); opacity: 0; }
+        }
+        
+        @keyframes textPulse {
+            0%, 100% { opacity: 0.7; }
+            50% { opacity: 1; }
+        }
+        
+        /* Desktop Adjustments */
+        @media (min-width: 768px) {
+            .hero {
+                padding: 100px 20px 80px;
+            }
+            
+            .hero h1 {
+                font-size: 4.5rem;
+            }
+            
+            .hero h1 span {
+                font-size: 3.5rem;
+            }
+            
+            .tagline {
+                font-size: 2.2rem;
+            }
+            
+            .hero-btns {
+                gap: 20px;
+            }
+            
+            .stat-item {
+                min-width: 160px;
+            }
+            
+            .about-container {
+                grid-template-columns: 1fr 1fr;
+                gap: 50px;
+            }
+            
+            .services-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            
+            .reels-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            
+            .contact-container {
+                grid-template-columns: 1fr 1fr;
+            }
+            
+            .footer-container {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Preloader -->
+    <div class="preloader" id="preloader">
+        <div class="mic-loader">
+            <div class="mic-stand"></div>
+            <div class="mic-head">
+                <div class="mic-grill"></div>
+            </div>
+            <div class="sound-waves">
+                <div class="wave"></div>
+                <div class="wave"></div>
+                <div class="wave"></div>
+            </div>
+        </div>
+        <div class="preloader-text">GETTING THE MIC READY</div>
+    </div>
+
+    <!-- Mobile Navigation -->
+    <header class="mobile-header">
+        <a href="#" class="logo">The<span>Corporate</span>MC</a>
+        <button class="mobile-menu-btn" id="menuToggle">
+            <i class="fas fa-bars"></i>
+        </button>
+    </header>
+    
+    <div class="nav-overlay" id="navOverlay"></div>
+    
+    <nav class="mobile-nav" id="mobileNav">
+        <button class="mobile-nav-close" id="closeMenu">
+            <i class="fas fa-times"></i>
+        </button>
+        <ul class="mobile-nav-links">
+            <li><a href="#home"><i class="fas fa-home"></i> Home</a></li>
+            <li><a href="#about"><i class="fas fa-user"></i> About</a></li>
+            <li><a href="#services"><i class="fas fa-concierge-bell"></i> Services</a></li>
+            <li><a href="#reels"><i class="fab fa-instagram"></i> Reels</a></li>
+            <li><a href="#testimonials"><i class="fas fa-comments"></i> Testimonials</a></li>
+            <li><a href="#contact"><i class="fas fa-envelope"></i> Contact</a></li>
+        </ul>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="hero-bg">
+            <div class="animated-bg"></div>
+            <div class="floating-shapes">
+                <div class="shape"></div>
+                <div class="shape"></div>
+                <div class="shape"></div>
+                <div class="shape"></div>
+            </div>
+        </div>
+        
+        <div class="hero-content">
+            <h1>YOUR EVENT<br><span>TheCorporateMC</span></h1>
+            
+            <div class="tagline">"Man helped by God"</div>
+            
+            <p>International Event Host | Wedding MC | Corporate Show Specialist with over 10 years of experience creating unforgettable experiences worldwide.</p>
+            
+            <div class="hero-btns">
+                <a href="https://wa.me/2348034064395" class="btn btn-primary">Book Now</a>
+                <a href="#about" class="btn btn-secondary">Learn More</a>
+            </div>
+            
+            <div class="hero-stats">
+                <div class="stat-item">
+                    <div class="stat-number">500+</div>
+                    <div class="stat-label">Events Hosted</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">28</div>
+                    <div class="stat-label">Countries</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">98%</div>
+                    <div class="stat-label">Satisfaction</div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- About Section -->
+    <section id="about" class="about">
+        <div class="container">
+            <div class="section-header">
+                <h2>About TheCorporateMC</h2>
+                <p>Get to know the man behind the microphone</p>
+            </div>
+            
+            <div class="about-container">
+                <div class="about-img">
+                    <img src="assest/thecorp.jpg" alt="TheCorporateMC">
+                </div>
+                
+                <div class="about-content">
+                    <h2>The Story</h2>
+                    <p>With a career spanning over a decade, TheCorporateMC has become a sought-after international host known for his charismatic presence, impeccable timing, and ability to connect with any audience.</p>
+                    
+                    <div class="about-highlights">
+                        <div class="highlight-item">
+                            <div class="highlight-icon">
+                                <i class="fas fa-globe"></i>
+                            </div>
+                            <div class="highlight-text">
+                                <h4>International Experience</h4>
+                                <p>Hosted events in 28 countries across 5 continents</p>
+                            </div>
+                        </div>
+                        
+                        <div class="highlight-item">
+                            <div class="highlight-icon">
+                                <i class="fas fa-microphone"></i>
+                            </div>
+                            <div class="highlight-text">
+                                <h4>Bilingual Hosting</h4>
+                                <p>Fluent in English and Pidgin with cultural sensitivity</p>
+                            </div>
+                        </div>
+                        
+                        <div class="highlight-item">
+                            <div class="highlight-icon">
+                                <i class="fas fa-award"></i>
+                            </div>
+                            <div class="highlight-text">
+                                <h4>Award Winning</h4>
+                                <p>Recipient of the 2023 African Event Host of the Year</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <a href="#contact" class="btn btn-primary">Request Availability</a>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Services Section -->
+    <section id="services" class="services">
+        <div class="container">
+            <div class="section-header">
+                <h2>Specialized Services</h2>
+                <p>Customized hosting solutions for every occasion</p>
+            </div>
+            
+            <div class="services-grid">
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-glass-cheers"></i>
+                    </div>
+                    <h3>Wedding Hosting</h3>
+                    <p>Transform your special day into an unforgettable experience with personalized hosting that honors traditions while creating magical moments.</p>
+                </div>
+                
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-briefcase"></i>
+                    </div>
+                    <h3>Corporate Events</h3>
+                    <p>Professional hosting that elevates your brand and ensures seamless execution of conferences, product launches, and award ceremonies.</p>
+                </div>
+                
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-globe-africa"></i>
+                    </div>
+                    <h3>International Hosting</h3>
+                    <p>Global events with cultural intelligence and seamless bilingual hosting for diverse audiences.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Instagram Reels Section -->
+    <section id="reels" class="reels">
+        <div class="container">
+            <div class="section-header">
+                <h2>Latest Reels</h2>
+                <p>Behind the Scenes & Event Highlights</p>
+            </div>
+            
+            <div class="reels-grid">
+                <!-- Reel 1 -->
+                <div class="reel-item">
+                    <div id="reel-1"></div>
+                    <div class="reel-overlay">
+                        <h3>The 𝐌𝐞𝐝𝐢𝐚 𝐑𝐨𝐮𝐧𝐝𝐭𝐚𝐛𝐥𝐞 𝐒𝐮𝐦𝐦𝐢𝐭 𝟐𝟎𝟐𝟓</h3>
+                        <p>organized by Blanche Aigle Communications was a superb gathering of industry leaders, policy shapers, investors, and creatives to discuss 𝐀𝐟𝐫𝐢𝐜𝐚’𝐬 𝐌𝐞𝐝𝐢𝐚 𝐑𝐞𝐧𝐚𝐢𝐬𝐬𝐚𝐧𝐜𝐞.
+                        </p>
+                    </div>
+                </div>
+                
+                <!-- Reel 2 -->
+                <div class="reel-item">
+                    <div id="reel-2"></div>
+                    <div class="reel-overlay">
+                        <h3>Concert</h3>
+                        <p>Another day to show that no be only explanation I sabi! Workings full ground!
+                            The last slide is a bonus 😌
+                            </p>
+                    </div>
+                </div>
+                
+                <!-- Reel 3 -->
+                <div class="reel-item">
+                    <div id="reel-3"></div>
+                    <div class="reel-overlay">
+                        <h3>the Nigeria Plastic Solution Activity launch</h3>
+                        <p>Aims to transform our approach to plastic waste. Proud to have partnered with the Lagos and Anambra State Governments to make this event a success.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="instagram-cta">
+                <a href="https://www.instagram.com/thecorporatemc/" target="_blank">
+                    <i class="fab fa-instagram"></i> Follow for more reels
+                </a>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Testimonials Section -->
+    <section id="testimonials" class="testimonials">
+        <div class="container">
+            <div class="section-header">
+                <h2>Client Testimonials</h2>
+                <p>What our clients say about us</p>
+            </div>
+            
+            <div class="testimonial-container">
+                <p class="testimonial-text">TheCorporateMC didn't just host our wedding—he elevated it to a cinematic experience. His ability to blend Yoruba traditions with modern entertainment had both our grandparents and friends raving for weeks!</p>
+                
+                <div class="testimonial-author">
+                    <div class="author-img">
+                        <img src="https://randomuser.me/api/portraits/women/32.jpg" alt="Client">
+                    </div>
+                    <div class="author-info">
+                        <h4>Adeola & Tunde</h4>
+                        <p>Lagos Wedding</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Contact Section -->
+    <section id="contact" class="contact">
+        <div class="container">
+            <div class="section-header">
+                <h2>Get In Touch</h2>
+                <p>Ready to elevate your event? Contact us today</p>
+            </div>
+            
+            <div class="contact-container">
+                <div class="contact-info">
+                    <h2>Contact Info</h2>
+                    <p>For bookings and inquiries, reach out via your preferred method.</p>
+                    
+                    <div class="contact-methods">
+                        <div class="contact-item">
+                            <div class="contact-icon">
+                                <i class="fab fa-whatsapp"></i>
+                            </div>
+                            <div class="contact-details">
+                                <h3>WhatsApp</h3>
+                                <a href="https://wa.me/2348034064395">+234 803 406 4395</a>
+                            </div>
+                        </div>
+                        
+                        <div class="contact-item">
+                            <div class="contact-icon">
+                                <i class="fas fa-envelope"></i>
+                            </div>
+                            <div class="contact-details">
+                                <h3>Email</h3>
+                                <a href="mailto:thecorporateemcee00@gmail.com">thecorporateemcee00@gmail.com</a>
+                            </div>
+                        </div>
+                        
+                        <div class="contact-item">
+                            <div class="contact-icon">
+                                <i class="fas fa-phone"></i>
+                            </div>
+                            <div class="contact-details">
+                                <h3>Call Direct</h3>
+                                <a href="tel:+2348034064395">+234 803 406 4395</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="contact-form">
+                    <h2>Send a Message</h2>
+                    <form>
+                        <div class="form-group">
+                            <label for="name">Full Name</label>
+                            <input type="text" id="name" class="form-control" placeholder="Enter your name">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="email">Email Address</label>
+                            <input type="email" id="email" class="form-control" placeholder="Enter your email">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="message">Message</label>
+                            <textarea id="message" class="form-control" placeholder="Tell me about your event"></textarea>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary" style="width: 100%;">Send Message</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-container">
+                <div class="footer-col">
+                    <a href="#" class="footer-logo">The<span>Corporate</span>MC</a>
+                    <p>International event host and master of ceremonies with a passion for creating unforgettable experiences.</p>
+                    <div class="social-links">
+                        <a href="https://www.instagram.com/thecorporatemc/" target="_blank"><i class="fab fa-instagram"></i></a>
+                        <a href="https://www.tiktok.com/@thecorporateemcee"><i class="fab fa-tiktok"></i></a>
+                        <a href="#"><i class="fab fa-linkedin"></i></a>
+                        <a href="https://www.youtube.com/@thecorporateemcee"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                
+                <div class="footer-col">
+                    <h3>Quick Links</h3>
+                    <ul class="footer-links">
+                        <li><a href="#home">Home</a></li>
+                        <li><a href="#about">About</a></li>
+                        <li><a href="#services">Services</a></li>
+                        <li><a href="#reels">Reels</a></li>
+                        <li><a href="#testimonials">Testimonials</a></li>
+                        <li><a href="#contact">Contact</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-col">
+                    <h3>Services</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">Wedding Hosting</a></li>
+                        <li><a href="#">Corporate Events</a></li>
+                        <li><a href="#">International Hosting</a></li>
+                        <li><a href="#">Award Ceremonies</a></li>
+                        <li><a href="#">Product Launches</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2024 TheCorporateMC. All Rights Reserved. | Website designed with <i class="fas fa-heart"></i> for premium event hosting</p>
+                <div class="design-credit">
+                    <span>Designed by</span>
+                    <a href="#" target="_blank">vend agency</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Preloader
+        const preloader = document.getElementById('preloader');
+        
+        window.addEventListener('load', function() {
+            setTimeout(function() {
+                preloader.classList.add('hidden');
+            }, 2000); // 2 seconds to match animation duration
+        });
+
+        // Mobile Navigation
+        const menuToggle = document.getElementById('menuToggle');
+        const mobileNav = document.getElementById('mobileNav');
+        const closeMenu = document.getElementById('closeMenu');
+        const navOverlay = document.getElementById('navOverlay');
+        
+        function openMobileMenu() {
+            mobileNav.classList.add('active');
+            navOverlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closeMobileMenu() {
+            mobileNav.classList.remove('active');
+            navOverlay.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+        
+        menuToggle.addEventListener('click', openMobileMenu);
+        closeMenu.addEventListener('click', closeMobileMenu);
+        navOverlay.addEventListener('click', closeMobileMenu);
+        
+        // Close menu when clicking on a link
+        document.querySelectorAll('.mobile-nav-links a').forEach(link => {
+            link.addEventListener('click', closeMobileMenu);
+        });
+        
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+                
+                if (targetElement) {
+                    closeMobileMenu();
+                    
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+        
+        // Instagram Reel Embedding
+        function embedInstagramReel(containerId, url) {
+            const container = document.getElementById(containerId);
+            
+            // Create the blockquote element
+            const blockquote = document.createElement('blockquote');
+            blockquote.className = 'instagram-media';
+            blockquote.setAttribute('data-instgrm-permalink', url);
+            blockquote.setAttribute('data-instgrm-version', '14');
+            blockquote.style.background = '#FFF';
+            blockquote.style.border = '0';
+            blockquote.style.borderRadius = '3px';
+            blockquote.style.boxShadow = '0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15)';
+            blockquote.style.margin = '1px';
+            blockquote.style.maxWidth = '540px';
+            blockquote.style.minWidth = '326px';
+            blockquote.style.padding = '0';
+            blockquote.style.width = '99.375%';
+            blockquote.style.width = '-webkit-calc(100% - 2px)';
+            blockquote.style.width = 'calc(100% - 2px)';
+            
+            // Create the inner div
+            const innerDiv = document.createElement('div');
+            innerDiv.style.padding = '16px';
+            
+            // Create the link
+            const link = document.createElement('a');
+            link.href = url;
+            link.style.background = '#FFFFFF';
+            link.style.lineHeight = '0';
+            link.style.padding = '0 0';
+            link.style.textAlign = 'center';
+            link.style.textDecoration = 'none';
+            link.style.width = '100%';
+            link.target = '_blank';
+            
+            // Create the loading animation
+            link.innerHTML = `
+                <div style="display: flex; flex-direction: row; align-items: center;">
+                    <div style="background-color: #F4F4F4; border-radius: 50%; flex-grow: 0; height: 40px; margin-right: 14px; width: 40px;"></div>
+                    <div style="display: flex; flex-direction: column; flex-grow: 1; justify-content: center;">
+                        <div style="background-color: #F4F4F4; border-radius: 4px; flex-grow: 0; height: 14px; margin-bottom: 6px; width: 100px;"></div>
+                        <div style="background-color: #F4F4F4; border-radius: 4px; flex-grow: 0; height: 14px; width: 60px;"></div>
+                    </div>
+                </div>
+                <div style="padding: 19% 0;"></div>
+                <div style="display:block; height:50px; margin:0 auto 12px; width:50px;">
+                    <svg width="50px" height="50px" viewBox="0 0 60 60" version="1.1" xmlns="https://www.w3.org/2000/svg" xmlns:xlink="https://www.w3.org/1999/xlink">
+                        <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                            <g transform="translate(-511.000000, -20.000000)" fill="#000000">
+                                <g>
+                                    <path d="M556.869,30.41 C554.814,30.41 553.148,32.076 553.148,34.131 C553.148,36.186 554.814,37.852 556.869,37.852 C558.924,37.852 560.59,36.186 560.59,34.131 C560.59,32.076 558.924,30.41 556.869,30.41 M541,60.657 C535.114,60.657 530.342,55.887 530.342,50 C530.342,44.114 535.114,39.342 541,39.342 C546.887,39.342 551.658,44.114 551.658,50 C551.658,55.887 546.887,60.657 541,60.657 M541,33.886 C532.1,33.886 524.886,41.1 524.886,50 C524.886,58.899 532.1,66.113 541,66.113 C549.9,66.113 557.115,58.899 557.115,50 C557.115,41.1 549.9,33.886 541,33.886 M565.378,62.101 C565.244,65.022 564.756,66.606 564.346,67.663 C563.803,69.06 563.154,70.057 562.106,71.106 C561.058,72.155 560.06,72.803 558.662,73.347 C557.607,73.757 556.021,74.244 553.102,74.378 C549.944,74.521 548.997,74.552 541,74.552 C533.003,74.552 532.056,74.521 528.898,74.378 C525.979,74.244 524.393,73.757 523.338,73.347 C521.94,72.803 520.942,72.155 519.894,71.106 C518.846,70.057 518.197,69.06 517.654,67.663 C517.244,66.606 516.755,65.022 516.623,62.101 C516.479,58.943 516.448,57.996 516.448,50 C516.448,42.003 516.479,41.056 516.623,37.899 C516.755,34.978 517.244,33.391 517.654,32.338 C518.197,30.938 518.846,29.942 519.894,28.894 C520.942,27.846 521.94,27.196 523.338,26.654 C524.393,26.244 525.979,25.756 528.898,25.623 C532.057,25.479 533.004,25.448 541,25.448 C548.997,25.448 549.943,25.479 553.102,25.623 C556.021,25.756 557.607,26.244 558.662,26.654 C560.06,27.196 561.058,27.846 562.106,28.894 C563.154,29.942 563.803,30.938 564.346,32.338 C564.756,33.391 565.244,34.978 565.378,37.899 C565.522,41.056 565.552,42.003 565.552,50 C565.552,57.996 565.522,58.943 565.378,62.101 M570.82,37.631 C570.674,34.438 570.167,32.258 569.425,30.349 C568.659,28.377 567.633,26.702 565.965,25.035 C564.297,23.368 562.623,22.342 560.652,21.575 C558.743,20.834 556.562,20.326 553.369,20.18 C550.169,20.033 549.148,20 541,20 C532.853,20 531.831,20.033 528.631,20.18 C525.438,20.326 523.257,20.834 521.349,21.575 C519.376,22.342 517.703,23.368 516.035,25.035 C514.368,26.702 513.342,28.377 512.574,30.349 C511.834,32.258 511.326,34.438 511.181,37.631 C511.035,40.831 511,41.851 511,50 C511,58.147 511.035,59.17 511.181,62.369 C511.326,65.562 511.834,67.743 512.574,69.651 C513.342,71.625 514.368,73.296 516.035,74.965 C517.703,76.634 519.376,77.658 521.349,78.425 C523.257,79.167 525.438,79.673 528.631,79.82 C531.831,79.965 532.853,80.001 541,80.001 C549.148,80.001 550.169,79.965 553.369,79.82 C556.562,79.673 558.743,79.167 560.652,78.425 C562.623,77.658 564.297,76.634 565.965,74.965 C567.633,73.296 568.659,71.625 569.425,69.651 C570.167,67.743 570.674,65.562 570.82,62.369 C570.966,59.17 571,58.147 571,50 C571,41.851 570.966,40.831 570.82,37.631"></path>
+                                </g>
+                            </g>
+                        </g>
+                    </svg>
+                </div>
+                <div style="padding-top: 8px;">
+                    <div style="color:#3897f0; font-family:Arial,sans-serif; font-size:14px; font-style:normal; font-weight:550; line-height:18px;">View this post on Instagram</div>
+                </div>
+                <div style="padding: 12.5% 0;"></div>
+                <div style="display: flex; flex-direction: row; margin-bottom: 14px; align-items: center;">
+                    <div>
+                        <div style="background-color: #F4F4F4; border-radius: 50%; height: 12.5px; width: 12.5px; transform: translateX(0px) translateY(7px);"></div>
+                        <div style="background-color: #F4F4F4; height: 12.5px; transform: rotate(-45deg) translateX(3px) translateY(1px); width: 12.5px; flex-grow: 0; margin-right: 14px; margin-left: 2px;"></div>
+                        <div style="background-color: #F4F4F4; border-radius: 50%; height: 12.5px; width: 12.5px; transform: translateX(9px) translateY(-18px);"></div>
+                    </div>
+                    <div style="margin-left: 8px;">
+                        <div style="background-color: #F4F4F4; border-radius: 50%; flex-grow: 0; height: 20px; width: 20px;"></div>
+                        <div style="width: 0; height: 0; border-top: 2px solid transparent; border-left: 6px solid #f4f4f4; border-bottom: 2px solid transparent; transform: translateX(16px) translateY(-4px) rotate(30deg)"></div>
+                    </div>
+                    <div style="margin-left: auto;">
+                        <div style="width: 0px; border-top: 8px solid #F4F4F4; border-right: 8px solid transparent; transform: translateY(16px);"></div>
+                        <div style="background-color: #F4F4F4; flex-grow: 0; height: 12px; width: 16px; transform: translateY(-4px);"></div>
+                        <div style="width: 0; height: 0; border-top: 8px solid #F4F4F4; border-left: 8px solid transparent; transform: translateY(-4px) translateX(8px);"></div>
+                    </div>
+                </div>
+                <div style="display: flex; flex-direction: column; flex-grow: 1; justify-content: center; margin-bottom: 24px;">
+                    <div style="background-color: #F4F4F4; border-radius: 4px; flex-grow: 0; height: 14px; margin-bottom: 6px; width: 224px;"></div>
+                    <div style="background-color: #F4F4F4; border-radius: 4px; flex-grow: 0; height: 14px; width: 144px;"></div>
+                </div>
+            `;
+            
+            innerDiv.appendChild(link);
+            blockquote.appendChild(innerDiv);
+            
+            const caption = document.createElement('p');
+            caption.style.color = '#c9c8cd';
+            caption.style.fontFamily = 'Arial,sans-serif';
+            caption.style.fontSize = '14px';
+            caption.style.lineHeight = '17px';
+            caption.style.marginBottom = '0';
+            caption.style.marginTop = '8px';
+            caption.style.overflow = 'hidden';
+            caption.style.padding = '8px 0 7px';
+            caption.style.textAlign = 'center';
+            caption.style.textOverflow = 'ellipsis';
+            caption.style.whiteSpace = 'nowrap';
+            
+            const captionLink = document.createElement('a');
+            captionLink.href = url;
+            captionLink.style.color = '#c9c8cd';
+            captionLink.style.fontFamily = 'Arial,sans-serif';
+            captionLink.style.fontSize = '14px';
+            captionLink.style.fontStyle = 'normal';
+            captionLink.style.fontWeight = 'normal';
+            captionLink.style.lineHeight = '17px';
+            captionLink.style.textDecoration = 'none';
+            captionLink.target = '_blank';
+            captionLink.textContent = 'A post shared by LAGOS EVENT MC || INTERNATIONAL EVENT HOST/MC (@thecorporatemc)';
+            
+            caption.appendChild(captionLink);
+            blockquote.appendChild(caption);
+            
+            // Append to container
+            container.appendChild(blockquote);
+        }
+        
+        // Embed the Instagram reels
+        document.addEventListener('DOMContentLoaded', function() {
+            // Replace these URLs with actual Instagram reel URLs
+            embedInstagramReel('reel-1', 'https://www.instagram.com/reel/DKMt27cMfLa/?utm_source=ig_web_copy_link');
+            embedInstagramReel('reel-2', 'https://www.instagram.com/p/C0yc6ZLsUjN/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==');
+            embedInstagramReel('reel-3', 'https://www.instagram.com/reel/C7Cyss_sVw9/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==');
+            
+            // Load Instagram embed script
+            const script = document.createElement('script');
+            script.async = true;
+            script.src = '//www.instagram.com/embed.js';
+            document.body.appendChild(script);
+        });
+    </script>
+</body>
+</html>
